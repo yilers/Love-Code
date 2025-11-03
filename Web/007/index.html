@@ -236,41 +236,96 @@
 		var _in = ['bounceIn', 'bounceInDown', 'bounceInLeft', 'bounceInRight', 'bounceInUp', 'fadeIn', 'fadeInDown', 'fadeInDownBig', 'fadeInLeft', 'fadeInLeftBig', 'fadeInRight', 'fadeInRightBig', 'fadeInUp', 'fadeInUpBig', 'rotateIn', 'rotateInDownLeft', 'rotateInDownRight', 'rotateInUpLeft', 'rotateInUpRight', 'slideInDown', 'slideInLeft', 'slideInRight'];
 		var _out = ['bounceOut', 'bounceOutDown', 'bounceOutLeft', 'bounceOutRight', 'bounceOutUp', 'fadeOut', 'fadeOutDown', 'fadeOutDownBig', 'fadeOutLeft', 'fadeOutLeftBig', 'fadeOutRight', 'fadeOutRightBig', 'fadeOutUp', 'fadeOutUpBig', 'rotateOut', 'rotateOutDownLeft', 'rotateOutDownRight', 'rotateOutUpLeft', 'rotateOutUpRight', 'slideOutDown', 'slideOutLeft', 'slideOutRight'];
 
-		// 生成虚拟数据
-		for (var i = 0; i < 199; i++) {
-			var num = (i % 40) + 1; // 通过取模运算实现循环
-		    	var img = num + ".png";
-		    	personArray.push({
-				image: "./" + img
-		    	});
+		// // 生成虚拟数据
+		// for (var i = 0; i < 199; i++) {
+		// 	var num = (i % 40) + 1; // 通过取模运算实现循环
+		//     	var img = num + ".png";
+		//     	personArray.push({
+		// 		image: "./" + img
+		//     	});
+		// }
+		
+		// // 模拟推送数据
+		// var s = setInterval(function () {
+		// 	// get animate
+		// 	var rand_in = parseInt(Math.random() * _in.length, 10);
+		// 	var rand_out = parseInt(Math.random() * _out.length, 10);
+		// 	if (CurPersonNum >= personArray.length) {
+		// 		CurPersonNum = 0;
+		// 	}
+		// 	$('.show_info').show();
+		// 	$('.show_info').addClass(_in[rand_in]);
+		// 	var randIndex = Math.floor(Math.random() * 40) + 1;
+		// 	setTimeout(function () {
+		// 		$('.show_info').removeClass(_in[rand_in]);
+		// 		document.getElementById('randomImage').src = './' + randIndex + '.png';
+		// 		// 更改展示的图片
+		// 		var img = document.getElementsByClassName('element')[CurPersonNum].getElementsByTagName('img')[0];
+		// 		img.setAttribute('src', './'  + randIndex + '.png');
+		// 		++CurPersonNum;
+		// 		setTimeout(function () {
+		// 			$('.show_info').addClass(_out[rand_out]);
+		// 			setTimeout(function () {
+		// 				$('.show_info').removeClass(_out[rand_out]);
+		// 				$('.show_info').hide();
+		// 			}, 1000);
+		// 		}, 2000);
+		// 	}, 1000);
+		// }, 5000);
+
+		// 生成虚拟数据（45张图片）
+		var personArray = [];
+		var totalImages = 45; // 当前总图片数
+		for (var i = 1; i <= totalImages; i++) {
+		    personArray.push({ image: "./" + i + ".png" });
 		}
 		
-		// 模拟推送数据
+		var CurPersonNum = 0;
+		
+		// 随机顺序数组，保证轮播不重复
+		var shuffleQueue = [];
+		function resetShuffleQueue() {
+		    shuffleQueue = Array.from({ length: totalImages }, (_, i) => i);
+		    // 打乱顺序
+		    for (let i = shuffleQueue.length - 1; i > 0; i--) {
+		        const j = Math.floor(Math.random() * (i + 1));
+		        [shuffleQueue[i], shuffleQueue[j]] = [shuffleQueue[j], shuffleQueue[i]];
+		    }
+		}
+		resetShuffleQueue();
+		
+		// animate 入场出场效果
+		var _in = ['bounceIn', 'fadeIn', 'fadeInDown', 'fadeInLeft', 'fadeInRight'];
+		var _out = ['bounceOut', 'fadeOut', 'fadeOutDown', 'fadeOutLeft', 'fadeOutRight'];
+		
+		// 模拟推送数据（轮播图片）
 		var s = setInterval(function () {
-			// get animate
-			var rand_in = parseInt(Math.random() * _in.length, 10);
-			var rand_out = parseInt(Math.random() * _out.length, 10);
-			if (CurPersonNum >= personArray.length) {
-				CurPersonNum = 0;
-			}
-			$('.show_info').show();
-			$('.show_info').addClass(_in[rand_in]);
-			var randIndex = Math.floor(Math.random() * 40) + 1;
-			setTimeout(function () {
-				$('.show_info').removeClass(_in[rand_in]);
-				document.getElementById('randomImage').src = './' + randIndex + '.png';
-				// 更改展示的图片
-				var img = document.getElementsByClassName('element')[CurPersonNum].getElementsByTagName('img')[0];
-				img.setAttribute('src', './'  + randIndex + '.png');
-				++CurPersonNum;
-				setTimeout(function () {
-					$('.show_info').addClass(_out[rand_out]);
-					setTimeout(function () {
-						$('.show_info').removeClass(_out[rand_out]);
-						$('.show_info').hide();
-					}, 1000);
-				}, 2000);
-			}, 1000);
+		    if (shuffleQueue.length === 0) {
+		        resetShuffleQueue(); // 所有图片播放完后重新打乱
+		    }
+		    var imgIndex = shuffleQueue.shift(); // 取出下一个图片索引
+		
+		    $('.show_info').show();
+		    var rand_in = _in[Math.floor(Math.random() * _in.length)];
+		    var rand_out = _out[Math.floor(Math.random() * _out.length)];
+		    $('.show_info').addClass(rand_in);
+		
+		    document.getElementById('randomImage').src = personArray[imgIndex].image;
+		
+		    var img = document.getElementsByClassName('element')[CurPersonNum].getElementsByTagName('img')[0];
+		    img.src = personArray[imgIndex].image;
+		
+		    CurPersonNum = (CurPersonNum + 1) % personArray.length;
+		
+		    setTimeout(function () {
+		        $('.show_info').removeClass(rand_in);
+		        $('.show_info').addClass(rand_out);
+		        setTimeout(function () {
+		            $('.show_info').removeClass(rand_out);
+		            $('.show_info').hide();
+		        }, 1000);
+		    }, 2000);
+		
 		}, 5000);
 
 		
