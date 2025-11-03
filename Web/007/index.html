@@ -109,7 +109,7 @@
     <script src="js/TrackballControls.js"></script>
     <script src="js/CSS3DRenderer.js"></script>
 
-    <div id="clickToStart" style="position:fixed; top:0; left:0; right:0; bottom:0; background:#000; color:#0ff; font-size:24px; text-align:center; padding-top:40vh; z-index:999;">
+    <!-- <div id="clickToStart" style="position:fixed; top:0; left:0; right:0; bottom:0; background:#000; color:#0ff; font-size:24px; text-align:center; padding-top:40vh; z-index:999;">
         点击进入，播放音乐 🎵
     </div>
 
@@ -118,6 +118,22 @@
             window.open("https://love-code-any.pages.dev/Web/007/ydyan.mp3", "_blank");
             document.getElementById('clickToStart').style.display = 'none';
         });
+    </script> -->
+    <div id="clickToStart" style="...">点击进入，播放音乐 🎵</div>
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://love-code-any.pages.dev/Web/007/ydyan.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+    document.getElementById('clickToStart').addEventListener('click', () => {
+        const audio = document.getElementById('bgMusic');
+        audio.play().then(() => {
+            console.log('音乐播放中');
+        }).catch(err => {
+            console.error('播放失败:', err);
+        });
+        document.getElementById('clickToStart').style.display = 'none';
+    });
     </script>
 
     <div id="container"></div>
